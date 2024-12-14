@@ -1,10 +1,53 @@
-const RealtimeDataCard = ({ title, value }) => (
-  <div className="p-6 bg-white rounded-lg shadow-md border border-green-200 hover:shadow-lg hover:scale-105 transform transition-all duration-300">
-    <h3 className="text-xl font-semibold text-green-700 mb-2 capitalize">
-      {title.replace(/([A-Z])/g, " $1")}
-    </h3>
-    <p className="text-3xl font-bold text-green-600">{value}</p>
-  </div>
-);
+import { FaLeaf } from "react-icons/fa";
+import { AiOutlineUser, AiOutlineDashboard } from "react-icons/ai";
+import { WiHumidity } from "react-icons/wi";
+import { BsThermometerHalf } from "react-icons/bs";
+import { TbAirConditioning } from "react-icons/tb";
+
+const RealtimeDataCard = ({ title, value }) => {
+  const icons = {
+    Humidity: <WiHumidity className="w-6 h-6 text-blue-500" />,
+    Temperature: <BsThermometerHalf className="w-6 h-6 text-red-500" />,
+    "Average Temperature": (
+      <BsThermometerHalf className="w-6 h-6 text-yellow-500" />
+    ),
+    "AC Temperature": <TbAirConditioning className="w-6 h-6 text-teal-500" />,
+    "Person Count": <AiOutlineUser className="w-6 h-6 text-purple-500" />,
+    "System Status": <AiOutlineDashboard className="w-6 h-6 text-green-500" />,
+  };
+
+  const baseTitle = Object.keys(icons).find(
+    (key) => title.trim().toLowerCase() === key.trim().toLowerCase()
+  );
+
+  const MetricIcon = icons[baseTitle] || null;
+
+  return (
+    <div className="relative p-6 bg-gradient-to-r from-green-100 via-white to-blue-50 rounded-lg shadow-md border border-green-300 hover:shadow-xl transform hover:-translate-y-2 transition-transform duration-300">
+      {/* Constant Leaf icon for green tech */}
+      <div className="absolute top-0 right-0 p-2 bg-green-500 text-white rounded-full shadow-lg transform translate-x-2 -translate-y-2">
+        <FaLeaf className="w-5 h-5" />
+      </div>
+
+      {/* Metric-specific icon for each data */}
+      <div className="flex items-center gap-3 mb-4 justify-center">
+        {MetricIcon && (
+          <div className="p-2 bg-gray-100 rounded-full shadow-md">
+            {MetricIcon}
+          </div>
+        )}
+        <h3 className="text-lg font-bold text-green-800 uppercase tracking-wide text-center">
+          {title}
+        </h3>
+      </div>
+
+      <div className="flex justify-center items-center">
+        <p className="text-4xl font-extrabold text-green-700 text-center">
+          {value}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default RealtimeDataCard;
