@@ -1,19 +1,22 @@
 import { FaLeaf } from "react-icons/fa";
-import { AiOutlineUser, AiOutlineDashboard } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
 import { WiHumidity } from "react-icons/wi";
 import { BsThermometerHalf } from "react-icons/bs";
 import { TbAirConditioning } from "react-icons/tb";
+import { VscVmActive, VscVmOutline } from "react-icons/vsc";
 
 const RealtimeDataCard = ({ title, value }) => {
   const icons = {
     Humidity: <WiHumidity className="w-6 h-6 text-blue-500" />,
     Temperature: <BsThermometerHalf className="w-6 h-6 text-red-500" />,
-    "Average Temperature": (
-      <BsThermometerHalf className="w-6 h-6 text-yellow-500" />
-    ),
     "AC Temperature": <TbAirConditioning className="w-6 h-6 text-teal-500" />,
     "Person Count": <AiOutlineUser className="w-6 h-6 text-purple-500" />,
-    "System Status": <AiOutlineDashboard className="w-6 h-6 text-green-500" />,
+    "System Status":
+      value === "Active" ? (
+        <VscVmActive className="w-6 h-6 text-green-500" />
+      ) : (
+        <VscVmOutline className="w-6 h-6 text-red-500" />
+      ),
   };
 
   const baseTitle = Object.keys(icons).find(

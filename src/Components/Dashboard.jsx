@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [outsideData, setOutsideData] = useState({
     Temperature: "Loading...",
     Humidity: "Loading...",
+    SystemSTS: "Loading...",
   });
 
   const [settings, setSettings] = useState({
@@ -33,8 +34,11 @@ const Dashboard = () => {
     MinTemp: "",
   });
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [modal, setModal] = useState({
+    isOpen: false,
+    type: "",
+    message: "",
+  });
 
   // Fetch data from Firebase
   useEffect(() => {
@@ -53,6 +57,7 @@ const Dashboard = () => {
         setOutsideData({
           Temperature: `${firebaseData["Temperature-2"]}°C`,
           Humidity: `${firebaseData["Humidity-2"]}%`,
+          SystemSTS: `${firebaseData["SystemSTS"]}`,
         });
       }
     });
@@ -97,15 +102,24 @@ const Dashboard = () => {
 
     update(ref(database, "Settings"), updatedSettings)
       .then(() => {
-        setSuccessMessage("Settings updated successfully!");
-        setErrorMessage("");
-        setTimeout(() => setSuccessMessage(""), 3000);
+        setModal({
+          isOpen: true,
+          type: "success",
+          message: "Settings updated successfully!",
+        });
       })
       .catch(() => {
-        setErrorMessage("Failed to update settings. Please try again.");
-        setSuccessMessage("");
-        setTimeout(() => setErrorMessage(""), 3000);
+        setModal({
+          isOpen: true,
+          type: "error",
+          message: "Failed to update settings. Please try again.",
+        });
       });
+  };
+
+  // Close Modal
+  const closeModal = () => {
+    setModal({ isOpen: false, type: "", message: "" });
   };
 
   return (
@@ -114,17 +128,32 @@ const Dashboard = () => {
         Real-Time Data Dashboard
       </h2>
 
-      {successMessage && (
-        <div className="bg-green-200 text-green-800 py-3 px-5 rounded-lg shadow-lg flex items-center justify-between mb-6">
-          <AiOutlineCheckCircle size={24} />
-          <span className="ml-4 text-lg font-medium">{successMessage}</span>
-        </div>
-      )}
-
-      {errorMessage && (
-        <div className="bg-red-200 text-red-800 py-3 px-5 rounded-lg shadow-lg flex items-center justify-between mb-6">
-          <AiOutlineCheckCircle size={24} />
-          <span className="ml-4 text-lg font-medium">{errorMessage}</span>
+      {modal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+            <div
+              className={`flex items-center ${
+                modal.type === "success" ? "text-green-800" : "text-red-800"
+              }`}
+            >
+              <AiOutlineCheckCircle
+                size={32}
+                className={`${
+                  modal.type === "success" ? "text-green-500" : "text-red-500"
+                } mr-4`}
+              />
+              <h3 className="text-2xl font-bold">
+                {modal.type === "success" ? "Success" : "Error"}
+              </h3>
+            </div>
+            <p className="mt-4 text-lg text-gray-700">{modal.message}</p>
+            <button
+              onClick={closeModal}
+              className="mt-6 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 transition"
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
 
@@ -159,6 +188,10 @@ const Dashboard = () => {
               value={outsideData.Temperature}
             />
             <RealtimeDataCard title="Humidity" value={outsideData.Humidity} />
+            <RealtimeDataCard
+              title="System Status"
+              value={outsideData.SystemSTS}
+            />
           </div>
         </section>
 
